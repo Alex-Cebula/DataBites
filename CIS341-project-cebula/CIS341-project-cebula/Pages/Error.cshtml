@@ -1,0 +1,13 @@
+﻿@page
+@model CIS341_project_cebula.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+@if (@Model.ErrorCode == 404)
+{
+    <h2 class="text-danger">The page you're looking for could not be found!</h2>
+}
+else
+{
+    <h1 class="text-danger">Error @Model.ErrorCode.</h1>
+}

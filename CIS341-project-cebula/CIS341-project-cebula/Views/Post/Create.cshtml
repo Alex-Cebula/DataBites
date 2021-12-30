@@ -1,0 +1,32 @@
+﻿@model Models.PostEditorViewModel
+@{
+    <!--Converting editor type to boolean-->
+    bool Editing = Model.EditorType.Equals(Constants.EditorType.Edit);
+}
+<div class="card p-4">
+    <h2>@(Editing ? "Edit" : "Create") Post</h2>
+    <h6>Topic: @Model.Post.Topic.Title</h6>
+    <form asp-controller="Post" asp-action="@(Editing ? "Edit" : "Create")" method="post" asp-antiforgery="true">
+        <label class="form-label" asp-for="@Model.Post.Title"></label><br />
+        <input class="form-control w-75" asp-for="@Model.Post.Title" required />
+        <span class="text-danger" asp-validation-for="@Model.Post.Title"></span><br />
+
+        <label class="form-label" asp-for="@Model.Post.Body"></label><br />
+        <textarea class="form-control" asp-for="@Model.Post.Body"></textarea>
+        <span class="text-danger" asp-validation-for="@Model.Post.Body"></span><br />
+
+        <input type="hidden" asp-for="@Model.Post.TopicId" />
+        <input type="hidden" asp-for="@Model.Post.PostId" />
+        <div>
+            <button type="submit" class="btn btn-primary d-inline-block">@(Editing ? "Edit" : "Create")</button>
+            @if (Editing)
+            {
+                <a class="btn btn-secondary d-inline-block" asp-action="Index" asp-controller="Post" asp-route-id="@Model.Post.PostId">Cancel</a> 
+            }
+            else
+            {
+                <a class="btn btn-secondary d-inline-block" asp-action="Index" asp-controller="Topic" asp-route-id="@Model.Post.TopicId">Cancel</a>
+            }
+        </div>
+    </form>
+</div>

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CIS341_project_cebula</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/f49a78ab46.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <header id="nav-header" class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-9">
+                <a class="text-decoration-none" asp-controller="Home" asp-action="Index"><h2 id="nav-logo" class="ml-md-5">DataBites</h2></a>
+                @await Component.InvokeAsync("NavMenu")
+            </div>
+            <div class="col">
+                @await Component.InvokeAsync("AuthMenu")
+            </div>
+        </div>
+    </header>
+    <div id="content" class="container mt-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top">
+        <div class="container">
+            &copy; 2021 - CIS341_project_cebula - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js" crossorigin="anonymous"></script>
+    <partial name="_ValidationScriptsPartial" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

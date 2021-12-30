@@ -1,0 +1,7 @@
+﻿@model List<Models.CommentViewModel>
+
+<!--Load partial view for each comment-->
+@foreach (Models.CommentViewModel reply in @Model)
+{
+    <partial name="../../_Comment.cshtml" model="@reply" />
+}

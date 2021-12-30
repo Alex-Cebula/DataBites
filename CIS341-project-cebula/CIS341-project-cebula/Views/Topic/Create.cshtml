@@ -1,0 +1,31 @@
+﻿@model Models.TopicEditorViewModel
+@{
+    <!--Convert editor type to boolean-->
+    bool Editing = Model.EditorType.Equals(Constants.EditorType.Edit);
+}
+<div class="card p-4">
+    <h2>@(Editing ? "Edit" : "Create") Topic</h2>
+    <form asp-controller="Topic" asp-action="@(Editing ? "Edit" : "Create")" method="post" asp-antiforgery="true">
+        <label class="form-label" asp-for="@Model.Topic.Title"></label><br />
+        <input class="form-control w-75" asp-for="@Model.Topic.Title" />
+        <span class="text-danger" asp-validation-for="@Model.Topic.Title"></span><br />
+
+        <label class="form-label" asp-for="@Model.Topic.Description"></label><br />
+        <textarea class="form-control" asp-for="@Model.Topic.Description"></textarea>
+        <span class="text-danger" asp-validation-for="@Model.Topic.Description"></span><br />
+
+        <input type="hidden" asp-for="@Model.Topic.TopicId" />
+
+        <div>
+            <button type="submit" class="btn btn-primary d-inline-block">@(Editing ? "Edit" : "Create")</button>
+            @if (Editing)
+            {
+                <a asp-action="Index" asp-controller="Topic" asp-route-id="@Model.Topic.TopicId" class="btn btn-secondary d-inline-block">Cancel</a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary d-inline-block">Cancel</a>
+            }
+        </div>
+    </form>
+</div>

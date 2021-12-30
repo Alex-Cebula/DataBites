@@ -1,0 +1,49 @@
+﻿@model Models.TopicViewModel
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="row no-gutters">
+            <div class="col">
+                <h4 id="topic" class="text-white d-inline-block" title="@Model.Topic.Title">@Model.Topic.Title</h4>
+            </div>
+            @if (!Model.IsQuickView)
+            {
+                <div class="col-lg-2 col-md-3 col-4">
+                    <a asp-controller="Post" asp-action="Create" asp-route-topicId="@Model.Topic.TopicId" id="create-post-btn" class="float-right"><i class="far fa-plus-square mr-1"></i>Create Post</a>
+                </div>
+                <div class="col-1">
+                    <div class="dropdown d-inline-block float-right">
+                        <button id="post-options-@Model.Topic.TopicId" class="btn post-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">⋮</button>
+                        <div class="dropdown-menu" aria-labelledby="post-options-@Model.Topic.TopicId">
+                            <a asp-controller="Report" asp-action="Create" asp-route-contentId="@Model.Topic.TopicId" asp-route-contentType="@Constants.ContentType.Topic" asp-route-returnUrl="@Context.Request.Path" class="dropdown-item">Report</a>
+                            @if (Model.IsMutable)
+                            {
+                                <div class="dropdown-divider"></div>
+                                <a asp-controller="Topic" asp-action="Edit" asp-route-id="@Model.Topic.TopicId" class="dropdown-item">Edit</a>
+                                <a onclick="Topic.DeleteTopicModal({ topicId: @Model.Topic.TopicId, url: '@Url.Action("Delete", "Topic")' })" class="dropdown-item">Delete</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="topic-details">
+            <div>
+                <span class="content-user">By <a href="#">@Model.Author.UserName</a></span>
+                <span class="content-date">
+                    @if ((DateTime.Now - Model.Topic.DateCreated).TotalDays < 31)
+                    {
+                        @Model.Topic.DateCreated.ToString("g")
+                    }
+                    else
+                    {
+                        @Model.Topic.DateCreated.ToString("d")
+                    }
+                </span>
+            </div>
+        </div>
+        <div class="mt-1">
+            @Model.Topic.Description
+        </div>
+    </div>
+</div>

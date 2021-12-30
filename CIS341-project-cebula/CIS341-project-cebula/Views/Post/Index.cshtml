@@ -1,0 +1,41 @@
+﻿@model Models.PostDetailViewModel
+@{
+    ViewData["Title"] = "Post Detail";
+}
+
+<!--Load post's partial view'-->
+<partial name="../Shared/_Post.cshtml" model="@Model.Post" />
+<div class="card">
+    <div class="card-header">
+        <h5>Comments</h5>
+    </div>
+    <div id="post-comments" class="card-body">
+        <div id="content-editor">
+            <!--Load comment editor-->
+            @if (Model.loadEditor)
+            {
+                @await Component.InvokeAsync("CommentEditor", new { postId = Model.Post.Post.PostId, editorType = Constants.EditorType.Create, post = Model.EditorContent.Post})
+            }
+        </div>
+        <!--Load partial view for each comment-->
+        @if (Model.Post.CommentCount > 0)
+        {
+            @foreach (Models.CommentViewModel comment in Model.Comments)
+            {
+                <partial name="../Shared/_Comment.cshtml" model="comment" />
+            }
+        }
+        else
+        {
+            <h5>There are no comments on this post!</h5>
+        }
+    </div>
+</div>
+<!--Load modal partial view-->
+<partial name="../Shared/_DeleteModal.cshtml" />
+
+@section Scripts{
+    <script>
+        PostDetail.Init({ postId: @Model.Post.Post.PostId, url: @Json.Serialize(Url.Action("Create", "Comment"))}, @Json.Serialize(Model.loadEditor));
+    </script>
+ }

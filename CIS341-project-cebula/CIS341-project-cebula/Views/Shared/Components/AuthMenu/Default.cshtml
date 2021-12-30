@@ -1,0 +1,46 @@
+﻿@model Models.UserViewModel
+<!--Show login details and logout prompt if authenticated-->
+@if (Model.IsAuthenticated)
+{
+    <div class="dropdown">
+        <button id="nav-profile" class="rounded-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i></button>
+        <div class="dropdown-menu" aria-labelledby="nav-profile">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <div class="text-dark text-center">@Model.HighestRole</div>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li class="nav-item">
+                    <a id="manage" class="nav-link text-dark dropdown-item pr-3 pl-3" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@Model.User.UserName</a>
+                </li>
+                <li class="nav-item">
+                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")">
+                        <button id="logout" type="submit" class="nav-link btn btn-link text-dark dropdown-item pr-3 pl-3">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <!--Show login or register prompt if not authenticated-->
+    <div id="auth-inline">
+        <div class="d-inline">
+            <a class="text-white" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </div>
+        <div class="d-inline ml-4">
+            <a class="text-white" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </div>
+    </div>
+    <div id="auth-hamburger" class="dropdown">
+        <a id="auth-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="auth-dropdown">
+            <a class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </div>
+    </div>
+}

@@ -1,0 +1,91 @@
+﻿@model Models.ReportDetailViewModel
+
+<div class="card p-4" id="report-detail">
+    <h3>Report: @Model.Report.ReportId</h3>
+    <div class="card mb-2">
+        <a class="card-header accordian text-decoration-none" href="#reportDetails" role="button" data-toggle="collapse" data-target="#reportDetails" aria-expanded="false" aria-controls="reportDetails">
+            <h6 class="m-0">Report Details</h6>
+            <i class="fas fa-plus float-right"></i>
+        </a>
+        <div class="card-body collapse p-0 pl-4 pr-4" id="reportDetails">
+            <h6>Reportee:</h6>
+            @(Model.ReportedUser != null ? Model.ReportedUser.UserName : "ANONYMOUS")
+            <h6>Content Type:</h6>
+            @Model.ContentType
+            <h6>Created:</h6>
+            @if ((DateTime.Now - Model.Report.DateCreated).TotalDays < 31)
+            {
+                @Model.Report.DateCreated.ToString("g");
+            }
+            else
+            {
+                @Model.Report.DateCreated.ToString("d");
+            }
+            <h6>Report Message:</h6>
+            @Model.Report.Body
+        </div>
+    </div>
+    <div class="card mb-3">
+        <a class="card-header accordion text-decoration-none" href="#contentDetails" role="button" data-toggle="collapse" data-target="#contentDetails" aria-expanded="false" aria-controls="contentDetails">
+            <h6 class="m-0">Content Details</h6>
+            <i class="fas fa-plus float-right"></i>
+        </a>
+        <div class="card-body collapse p-0 pl-4 pr-4" id="contentDetails">
+            @if (Model.ReportedContent != null)
+            {
+                    <!--Format the contents date-->
+                    DateTime ContentDateRaw = (DateTime)Model.ReportedContent.GetType().GetProperty(Constants.Reflection.ContentProperty.DateCreated).GetValue(Model.ReportedContent);
+                    string ContentDateFormatted;
+                    if ((DateTime.Now - ContentDateRaw).TotalDays < 31)
+                    {
+                        ContentDateFormatted = ContentDateRaw.ToString("g");
+                    }
+                    else
+                    {
+                        ContentDateFormatted = ContentDateRaw.ToString("d");
+                    }
+                
+                <!--Display the data based on it's content type-->
+                @if (Model.Report.ContentType.Equals(Constants.ContentType.Topic))
+                {
+                    <h6>Author:</h6>
+                    @Model.ReportedUser.UserName
+                    <h6>Title:</h6>
+                    @Model.ReportedContent.GetType().GetProperty(Constants.Reflection.ContentProperty.Title).GetValue(Model.ReportedContent)
+                    <h6>Created:</h6>
+                    @ContentDateFormatted
+                    <h6>Description:</h6>
+                    @Model.ReportedContent.GetType().GetProperty(Constants.Reflection.TopicProperty.Description).GetValue(Model.ReportedContent)
+                }
+                else if (Model.Report.ContentType.Equals(Constants.ContentType.Post))
+                {
+                    <h6>Author:</h6>
+                    @Model.ReportedUser.UserName
+                    <h6>Title:</h6>
+                    @Model.ReportedContent.GetType().GetProperty(Constants.Reflection.ContentProperty.Title).GetValue(Model.ReportedContent)
+                    <h6>Created:</h6>
+                    @ContentDateFormatted
+                    <h6>Body:</h6>
+                    @Model.ReportedContent.GetType().GetProperty(Constants.Reflection.PostProperty.Body).GetValue(Model.ReportedContent)
+                }
+                else
+                {
+                    <h6>Author:</h6>
+                    @Model.ReportedUser.UserName
+                    <h6>Created:</h6>
+                    @ContentDateFormatted
+                    <h6>Body:</h6>
+                    @Model.ReportedContent.GetType().GetProperty(Constants.Reflection.PostProperty.Body).GetValue(Model.ReportedContent)
+                }
+            }
+            else
+            {
+                <h5 class="p-4">This content no longer exists</h5>
+            }
+        </div>
+    </div>
+    <div class="ml-1">
+        <button type="button" class="btn btn-primary d-inline-block" onclick="ReportDetail.ResolveReport({reportId: @Model.Report.ReportId, url: '@Url.Action("Resolve", "Report")'})">Resolve</button>
+        <a asp-controller="Report" asp-action="Index" asp-route-id="" class="btn btn-secondary d-inline-block">Cancel</a>
+    </div>
+</div>

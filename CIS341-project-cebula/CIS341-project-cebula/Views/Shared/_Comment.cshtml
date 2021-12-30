@@ -1,0 +1,79 @@
+﻿@model Models.CommentViewModel
+@{
+    bool HasReplies = Model.ReplyCount > 0;
+    string HasRepliesStyle = HasReplies ? "mb-2" : ""; //If comment has replies, add extra space below
+    string RepliesMetricLabel = "Repl" + (Model.ReplyCount > 1 ? "ies" : "y"); //Format replies label
+    string LikedStyle = Model.IsLiked ? "active" : ""; //If current user is liking it, make it active
+    string FormattedDate; //Format the date
+    if ((DateTime.Now - Model.Comment.DateCreated).TotalDays < 31)
+    {
+        FormattedDate = Model.Comment.DateCreated.ToString("g");
+    }
+    else
+    {
+        FormattedDate = Model.Comment.DateCreated.ToString("d");
+    }
+}
+<div id="comment-@Model.Comment.PostId" class="comment-line mb-3 pl-2">
+    <div class="pb-1">
+        <div class="row">
+            <div class="col-11">
+                <span class="content-user" title="@Model.Author.UserName"><a href="#">@Model.Author.UserName</a></span>
+                <span class="content-date">
+                    @FormattedDate
+                </span>
+            </div>
+            <div class="col-1">
+                <div class="dropdown d-inline-block float-right">
+                    <button id="comment-options-@Model.Comment.ParentPostId" class="btn post-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">⋮</button>
+                    <div class="dropdown-menu" aria-labelledby="comment-options-@Model.Comment.ParentPost">
+                        <a asp-controller="Report" asp-action="Create" asp-route-contentId="@Model.Comment.PostId" asp-route-contentType="@Constants.ContentType.Comment" asp-route-returnUrl="@Url.Action("Index", "Post", new { id = Model.Comment.RootPostId})" class="dropdown-item">Report</a>
+                        @if (Model.IsMutable)
+                        {
+                            <div class="dropdown-divider"></div>
+                            <a onclick="Comment.EditComment({ postId: @Model.Comment.PostId, url: '@Url.Action("Edit", "Comment")' });" class="dropdown-item">Edit</a>
+                            <a onclick="Comment.DeleteCommentModal({ postId: @Model.Comment.PostId, url: '@Url.Action("Delete", "Comment")' })" class="dropdown-item">Delete</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="comment-body pl-1 @HasRepliesStyle">
+            @Model.Comment.Body
+        </div>
+        <div class="comment-actions">
+            <div class="comment-like @LikedStyle d-inline">
+                <span class="like-count comment-metric-value">@Model.LikeCount</span>
+                @if (Model.IsAuthenticated)
+                {
+                    <i onclick="Comment.LikeComment({postId: @Model.Comment.PostId, url: '@Url.Action("Like", "Post")'})" title="Like" class="far fa-thumbs-up"></i>
+                }
+                else
+                {
+                    <a class="text-decoration-none" href="@Url.Page("/Account/Login", new { area = "Identity" })">
+                        <i title="Like" class="far fa-thumbs-up"></i>
+                    </a>
+                }
+            </div>
+            <div class="comment-reply d-inline ml-2">
+                <span class="comment-metric-value">@Model.ReplyCount</span>
+                @if (Model.IsAuthenticated)
+                {
+                    <i onclick="PostDetail.LoadContentEditor({postId: @Model.Comment.PostId, url: '@Url.Action("Create", "Comment")'})" title="Reply" class="far fa-comment-alt"></i>
+                }
+                else
+                {
+                    <a class="text-decoration-none" href="@Url.Page("/Account/Login", new { area = "Identity" })">
+                        <i onclick="PostDetail.LoadContentEditor({postId: @Model.Comment.PostId, url: '@Url.Action("Create", "Comment")'})" title="Reply" class="far fa-comment-alt"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+    @if (HasReplies)
+    {
+        <div class="comment-drilldown-@Model.Comment.PostId ml-1">
+            <a class="load-drilldown" onclick="PostDetail.LoadDrillDown({postId: @Model.Comment.PostId, url: '@Url.Action("DrillDown", "Comment")'})">View @Model.ReplyCount @RepliesMetricLabel</a>
+        </div>
+    }
+</div>

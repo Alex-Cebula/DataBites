@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CIS341_project_cebula.Areas.Identity.Data
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="dropdown">
+        <button id="nav-profile" class="rounded-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i></button>
+        <div class="dropdown-menu" aria-labelledby="nav-profile">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+                </li>
+                <li class="nav-item">
+                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                        <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+}
+else
+{
+    <div id="auth-inline" class="row no-gutters">
+        <div class="col-6 col-lg-3">
+            <a class="text-white" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="text-white" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </div>
+    </div>
+    <div id="auth-hamburger" class="dropdown">
+        <button id="auth-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HAMB</button>
+        <div class="dropdown-menu" aria-labelledby="auth-dropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}

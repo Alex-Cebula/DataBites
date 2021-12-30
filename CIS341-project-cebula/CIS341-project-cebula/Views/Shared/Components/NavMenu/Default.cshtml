@@ -1,0 +1,22 @@
+﻿@model Models.UserViewModel
+
+<div class="dropdown-group">
+    <div class="dropdown d-inline-block">
+        <button id="topic-menu" class="custom-dropdown btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topics</button>
+        <div class="dropdown-menu" aria-labelledby="topic-menu">
+            <a asp-controller="Topic" class="dropdown-item">View Topics</a>
+            <a asp-controller="Topic" asp-action="Create" class="dropdown-item">Create Topic</a>
+        </div>
+    </div>
+    <!--If user is an admin-->
+    @if (Model.Roles.Contains(Constants.Role.Admin))
+    {
+        <div class="dropdown d-inline-block ml-1">
+            <button id="admin-menu" class="custom-dropdown btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</button>
+            <div class="dropdown-menu" aria-labelledby="admin-menu">
+                <a asp-controller="Report" asp-action="Index" class="dropdown-item">View Reports</a>
+                <a asp-controller="ManageUsers" asp-action="Index" class="dropdown-item">Manage Users</a>
+            </div>
+        </div>
+    }
+</div>

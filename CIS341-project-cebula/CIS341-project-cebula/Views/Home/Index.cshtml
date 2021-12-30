@@ -1,0 +1,11 @@
+﻿@model Models.HomeViewModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<h4 class="text-white mb-4">Recent Activity</h4>
+<!--Load partial view for each post-->
+@foreach (var post in Model.Posts)
+{
+    <partial name="../Shared/_Post.cshtml" model="@post" />
+}
+

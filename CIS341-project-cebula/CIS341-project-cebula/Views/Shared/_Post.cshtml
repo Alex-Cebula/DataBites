@@ -1,0 +1,111 @@
+﻿@model Models.PostViewModel
+@{
+    bool HasLikes = Model.LikeCount > 0; 
+    bool HasComments = Model.CommentCount > 0;
+    string LikedStyle = Model.IsLiked ? "active" : ""; //If current user liked it, make it active
+    string ShowLikeMetric = HasLikes ? "display: inline-block" : "display:none"; //If there are likes show the metrics
+    string LikeMetricLabel = "Like" + (Model.LikeCount > 1 ? "s" : ""); //Format likes label
+    string CommentMetricLabel = "Comment" + (Model.CommentCount > 1 ? "s" : ""); //Format comments label
+    string FormattedDate; //Format date
+    if ((DateTime.Now - Model.Post.DateCreated).TotalDays < 31)
+    {
+        FormattedDate = Model.Post.DateCreated.ToString("g");
+    }
+    else
+    {
+        FormattedDate = Model.Post.DateCreated.ToString("d");
+    }
+}
+<div id="post-@Model.Post.PostId" class="card mb-5 post">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-11">
+                <div class="row">
+                    <div class="col-md-6">
+                        @if (Model.ShouldShowTopic)
+                        {
+                            <a asp-controller="Topic" asp-action="Index" asp-route-id="@Model.Post.TopicId"><h5 class="post-topic-pill d-inline-block" title="@Model.Post.Topic.Title">@Model.Post.Topic.Title</h5></a>
+                        }
+                        <a asp-controller="Post" asp-action="Index" asp-route-id="@Model.Post.PostId"><h5 class="post-title pl-md-3 d-inline-block" title="@Model.Post.Title">@Model.Post.Title</h5></a>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="content-user" title="@Model.Author.UserName">Posted by <a href="#">@Model.Author.UserName</a></span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="content-date float-left">
+                            @FormattedDate
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @if (!Model.IsQuickView)
+            {
+                <div class="col-1">
+                    <div class="dropdown d-inline-block float-right">
+                        <button id="post-options-@Model.Post.PostId" class="btn post-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">⋮</button>
+                        <div class="dropdown-menu" aria-labelledby="post-options-@Model.Post.PostId">
+                            <a asp-controller="Report" asp-action="Create" asp-route-contentId="@Model.Post.PostId" asp-route-contentType="@Constants.ContentType.Post" asp-route-returnUrl="@Context.Request.Path" class="dropdown-item">Report</a>
+                            @if (Model.IsMutable)
+                            {
+                                <div class="dropdown-divider"></div>
+                                <a asp-controller="Post" asp-action="Edit" asp-route-postId="@Model.Post.PostId" class="dropdown-item">Edit</a>
+                                <a onclick="Post.DeletePostModal({ postId: @Model.Post.PostId, url: '@Url.Action("Delete", "Post")' })" class="dropdown-item">Delete</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="@(Model.IsQuickView ? "post-body-minimal" : "") post-body">
+            @Model.Post.Body
+        </div>
+        @if (Model.IsQuickView)
+        {
+            <a asp-controller="Post" asp-action="Index" asp-route-id="@Model.Post.PostId" class="post-readmore d-inline-block">...Read More</a>
+        }
+    </div>
+    <div class="card-footer p-0">
+        <div class="post-metrics pt-1 pb-1" style="@(!HasComments && !HasLikes ? "display: none" : "")">
+            <span class="like-count post-metric-value ml-3" style="@ShowLikeMetric">@Model.LikeCount</span>
+            <span class="like-count-label post-metric-label ml-1" style="@ShowLikeMetric">@LikeMetricLabel</span>
+            @if (HasComments)
+            {
+                <span class="post-metric-value ml-3">@Model.CommentCount</span><span class="post-metric-label ml-1">@CommentMetricLabel</span>
+            }
+        </div>
+        <hr class="post-footer-divider" />
+        <div class="post-actions pb-3 pt-3">
+            <div class="post-like @LikedStyle d-inline ml-4">
+                @if (Model.IsAuthenticated)
+                {
+                    <i onclick="Post.LikePost({postId: @Model.Post.PostId, url: '@Url.Action("Like", "Post", new { id = Model.Post.PostId })'})" title="Like" class="far fa-thumbs-up"></i>
+                }
+                else
+                {
+                    <a class="text-decoration-none" href="@Url.Page("/Account/Login", new { area = "Identity" })">
+                        <i title="Like" class="far fa-thumbs-up"></i>
+                    </a>
+                }
+            </div>
+            <div class="post-comment d-inline ml-4">
+                @if (Model.IsAuthenticated)
+                {
+                    if (Model.IsQuickView)
+                    {
+                        <a href="@Url.Action("Index", "Post", new { id = Model.Post.PostId, loadEditor = true })" title="Comment" class="far fa-comment-alt text-decoration-none"></a>
+                    }
+                    else
+                    {
+                        <i title="Comment" class="far fa-comment-alt"></i>
+                    }
+                }
+                else
+                {
+                    <a href="@Url.Page("/Account/Login", new { area = "Identity" })" title="Comment" class="far fa-comment-alt text-decoration-none"></a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

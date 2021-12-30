@@ -1,0 +1,48 @@
+﻿@model Models.ManageUserViewModel
+
+<div class="card pt-4 pb-4 pl-3 pr-3 mt-3 table-wrapper">
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>User Id</th>
+                <th>Username</th>
+                <th>Suspended</th>
+                <th>Topics</th>
+                <th>Posts</th>
+                <th>Comments</th>
+                <th>Likes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <!--Add row for each user-->
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.User.UserAccountId</td>
+                <td><a href="#">@user.User.UserName</a></td>
+                <td>@user.UserAccount.Suspended</td>
+                <td>@user.UserAccount.Topics.Count()</td>
+                <td>@user.UserAccount.Posts.Where(x => x.ContentType.Equals(Constants.ContentType.Post)).Count()</td>
+                <td>@user.UserAccount.Posts.Where(x => !x.ContentType.Equals(Constants.ContentType.Post)).Count()</td>
+                <td>@user.UserAccount.Likes.Count()</td>
+                <td class="text-center">
+                    <div class="dropdown">
+                        <button id="post-options-@user.User.UserAccountId" class="btn post-options" data-toggle="dropdown" data-flip="false" aria-haspopup="true" aria-expanded="false">⋮</button>
+                        <div class="dropdown-menu" aria-labelledby="post-options-@user.User.UserAccountId">
+                            <a onclick="Users.SuspendUserModal({ userAccountId: @user.User.UserAccountId, url: '@Url.Action("SuspendUser", "ManageUsers")'})" class="dropdown-item">@(user.UserAccount.Suspended ? "Unsuspend" : "Suspend")</a>
+                            <a onclick="Users.DeleteUserModal({ userAccountId: @user.User.UserAccountId, url: '@Url.Action("DeleteUser", "ManageUsers")' })" class="dropdown-item">Delete</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<!--Load modal partial views-->
+<partial name="../Shared/_DeleteModal.cshtml" />
+<partial name="../Shared/_SuspendModal.cshtml" />
+
+@section Scripts{
+    <script>Users.Initialize();</script>
+}

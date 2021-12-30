@@ -1,0 +1,37 @@
+﻿@model Models.TopicsViewModel
+<div class="card pl-3 pr-3 pt-4 pb-4 mt-3 table-wrapper">
+    <table id="topics-table">
+        <thead>
+            <tr>
+                <th>Topic</th>
+                <th>Posts</th>
+                <th>Author</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--Add row for each topic-->
+            @foreach (var topic in Model.Topics)
+            {
+                <tr>
+                    <td><a asp-action="Index" asp-controller="Topic" asp-route-id="@topic.Topic.TopicId">@topic.Topic.Title</a></td>
+                    <td>@topic.Topic.Posts.Count()</td>
+                    <td><a href="#">@topic.Author.UserName</a></td>
+                    <td>
+                        @if ((DateTime.Now - topic.Topic.DateCreated).TotalDays < 31)
+                        {
+                            @topic.Topic.DateCreated.ToString("g")
+                        }
+                        else
+                        {
+                            @topic.Topic.DateCreated.ToString("d")
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts{ 
+    <script>Topics.Initialize();</script>
+}

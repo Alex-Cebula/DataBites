@@ -1,0 +1,39 @@
+﻿@model Models.ReportsViewModel
+
+<div class="card pl-3 pr-3 pt-4 pb-4 mt-3 table-wrapper">
+    <table id="report-table">
+        <thead>
+            <tr>
+                <th>Report Id</th>
+                <th>Content Type</th>
+                <th>Reportee</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--Add a row for each report-->
+            @foreach (var report in Model.Reports)
+            {
+                <tr onclick="window.location = '@Url.Action("Index", "Report", new { id = report.Report.ReportId })'">
+                    <td>@report.Report.ReportId</td>
+                    <td>@report.ContentType</td>
+                    <td>@(report.User != null ? @report.User.UserName : "ANONYMOUS")</td>
+                    <td>
+                        @if ((DateTime.Now - report.Report.DateCreated).TotalDays < 31)
+                        {
+                            @report.Report.DateCreated.ToString("g")
+                        }
+                        else
+                        {
+                            @report.Report.DateCreated.ToString("d")
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{ 
+    <script>Reports.Initialize();</script>
+}

@@ -1,0 +1,19 @@
+﻿@model Models.ReportEditorModel
+
+<div class="card p-4">
+    <form id="report-form" asp-action="Create" , asp-controller="Report" method="post" asp-antiforgery="true">
+        <h2>Generate Report for @Model.ContentType</h2>
+
+        <label class="form-label" asp-for="@Model.Report.Body">Report Message</label><br />
+        <textarea class="form-control" asp-for="@Model.Report.Body"></textarea>
+        <span class="text-danger" asp-validation-for="@Model.Report.Body"></span><br />
+
+        <input type="hidden" asp-for="@Model.Report.ContentId" />
+        <input type="hidden" asp-for="@Model.Report.ContentType" />
+        <input type="hidden" asp-for="@Model.ReturnUrl" />
+        <div>
+            <button type="submit" class="btn btn-primary d-inline-block">Report</button>
+            <a href="@Model.ReturnUrl" class="btn btn-secondary d-inline-block">Cancel</a>
+        </div>
+    </form>
+</div>

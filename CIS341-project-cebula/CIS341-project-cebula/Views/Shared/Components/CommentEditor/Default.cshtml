@@ -1,0 +1,19 @@
+﻿@model Models.PostEditorViewModel
+@{ 
+    <!--Convert editor type to boolean-->
+    bool Editing = Model.EditorType.Equals(Constants.EditorType.Edit);
+    <!--Format content type-->
+    string ContentType = Model.ParentContentType.Equals(Constants.ContentType.Post) ? "Post" : "Comment";
+}
+
+<form class="pb-4" asp-controller="Comment" asp-action="@( Editing ? "Edit" : "Create")" method="post" asp-antiforgery="true">
+    <label class="d-block" for="Post_Body">@(Editing ? "[EDIT]" : "") Replying to @Model.ParentAuthor.UserName's @ContentType</label>
+    <textarea class="comment-text-area w-75 form-control" asp-for="@Model.Post.Body"></textarea>
+    <div class="create-comment-actions d-inline-block pt-2 pl-1">
+        <button class="btn btn-primary" type="submit">Post</button>
+        <button class="btn btn-secondary ml-1" id="cancel-comment" type="button">Cancel</button>
+    </div>
+    <span class="text-danger" asp-validation-for="@Model.Post.Body"></span>
+    <input type="hidden" asp-for="@Model.Post.ParentPostId" />
+    <input type="hidden" asp-for="@Model.Post.PostId"/>
+</form>
